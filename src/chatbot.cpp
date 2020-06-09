@@ -19,7 +19,7 @@ ChatBot::ChatBot()
 
 // constructor WITH memory allocation
 ChatBot::ChatBot(std::string filename)
-{
+    : _imgFilename(filename) {
     std::cout << "ChatBot Constructor" << std::endl;
     
     // invalidate data handles
@@ -42,11 +42,86 @@ ChatBot::~ChatBot()
     }
 }
 
-//// STUDENT CODE
-////
+ChatBot::ChatBot(const ChatBot &source)
+{
+    std::cout << "ChatBot Copy Constructor" << std::endl;
 
-////
-//// EOF STUDENT CODE
+    // copy data handles
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+
+    // load the same image into heap memory
+    if (source._image)
+        _image = new wxBitmap(source._imgFilename, wxBITMAP_TYPE_PNG);
+}
+
+ChatBot& ChatBot::operator=(const ChatBot &source)
+{
+    std::cout << "ChatBot Copy Assignment Operator" << std::endl;
+
+    if (this == &source)
+        return *this;
+
+    // copy data handles
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+
+    // delete previously loaded image
+    if (_image)
+        delete _image;
+
+    // load the same image into heap memory
+    if (source._image)
+        _image = new wxBitmap(source._imgFilename, wxBITMAP_TYPE_PNG);
+
+    return *this;
+}
+
+// move constructor
+ChatBot::ChatBot(ChatBot &&source)
+{
+    std::cout << "ChatBot Move Constructor" << std::endl;
+
+    // copy data handles
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    _image = source._image;
+
+    // invalidate source
+    source._currentNode = nullptr;
+    source._rootNode = nullptr;
+    source._chatLogic = nullptr;
+    source._image = NULL;
+}
+
+// move assignment operator
+ChatBot& ChatBot::operator=(ChatBot &&source)
+{
+    std::cout << "ChatBot Move Assignment Operator" << std::endl;
+
+    if (this == &source)
+        return *this;
+
+    // replace loaded image
+    delete _image;
+    _image = source._image;
+
+    // copy data handles
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+
+    // invalidate source
+    source._currentNode = nullptr;
+    source._rootNode = nullptr;
+    source._chatLogic = nullptr;
+    source._image = NULL;
+
+    return *this;
+}
 
 void ChatBot::ReceiveMessageFromUser(std::string message)
 {
