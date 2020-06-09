@@ -50,6 +50,7 @@ ChatBot::ChatBot(const ChatBot &source)
     _currentNode = source._currentNode;
     _rootNode = source._rootNode;
     _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
 
     // load the same image into heap memory
     if (source._image)
@@ -67,6 +68,7 @@ ChatBot& ChatBot::operator=(const ChatBot &source)
     _currentNode = source._currentNode;
     _rootNode = source._rootNode;
     _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
 
     // delete previously loaded image
     if (_image)
@@ -90,6 +92,8 @@ ChatBot::ChatBot(ChatBot &&source)
     _chatLogic = source._chatLogic;
     _image = source._image;
 
+    _chatLogic->SetChatbotHandle(this);
+
     // invalidate source
     source._currentNode = nullptr;
     source._rootNode = nullptr;
@@ -106,13 +110,17 @@ ChatBot& ChatBot::operator=(ChatBot &&source)
         return *this;
 
     // replace loaded image
-    delete _image;
+    if (_image)
+        delete _image;
+    
     _image = source._image;
 
     // copy data handles
     _currentNode = source._currentNode;
     _rootNode = source._rootNode;
     _chatLogic = source._chatLogic;
+
+    _chatLogic->SetChatbotHandle(this);
 
     // invalidate source
     source._currentNode = nullptr;
